@@ -1,0 +1,17 @@
+streamlit
+groq
+pymupdf
+python-docx
+odfpy
+langchain-text-splitters
+sentence-transformers
+faiss-cpu
+rank-bm25
+numpy
+sentence-transformers
+faiss-cpu
+rank-bm25
+numpy
+ragas
+datasets
+deepeval
