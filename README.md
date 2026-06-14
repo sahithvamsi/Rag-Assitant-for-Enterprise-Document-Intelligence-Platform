@@ -47,7 +47,6 @@ This approach reduces hallucinations and improves answer reliability by groundin
 
 ✅ Retrieved evidence visualization
 
-🏗️ System Architecture
 User Uploads PDF
         ↓
 Document Parser
@@ -77,7 +76,6 @@ Groq Llama 3.3 70B
 Answer Generation
         ↓
 Source Citations + UI Display
-🛠 Tech Stack
 Frontend
 Streamlit
 
