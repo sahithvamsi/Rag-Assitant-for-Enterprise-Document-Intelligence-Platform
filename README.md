@@ -1,13 +1,14 @@
+DocuMind AI — Enterprise Document Intelligence Platform
+Upload PDFs • Ask Questions • Get Source-Cited Answers using RAG, Hybrid Search, and LLMs
 
-🤖 DocuMind AI: Enterprise Document Intelligence Platform
-Upload PDFs • Ask Questions • Get Source-Cited Answers using RAG, Hybrid Search, and LLMs.
-
-Live Demo: https://ragproject345.streamlit.app/
+🌐 Live Demo: https://ragproject345.streamlit.app/
 
 📌 Overview
-DocuMind AI is an enterprise-grade Retrieval-Augmented Generation (RAG) application that allows users to upload PDF documents and ask natural language questions about them.
+DocuMind AI is an enterprise-grade Retrieval-Augmented Generation (RAG) platform that enables users to upload PDF documents and interact with them using natural language queries.
 
-The system combines:
+Instead of relying only on an LLM's internal knowledge, the system retrieves relevant information directly from uploaded documents and generates accurate, source-grounded answers with citations.
+
+The platform combines:
 
 Semantic Search using FAISS
 
@@ -17,32 +18,34 @@ Hybrid Retrieval
 
 Cross-Encoder Reranking
 
-LLM-powered Answer Generation with Groq Llama 3.3 70B
+LLM-powered Answer Generation using Groq Llama 3.3 70B
 
-Unlike traditional chatbots, DocuMind AI provides source-aware answers with citations, enabling users to verify information directly from uploaded documents.
+This approach reduces hallucinations and improves answer reliability by grounding responses in document content.
 
 ✨ Features
 ✅ Upload PDF documents
 
-✅ Extract and process document text
+✅ Automatic text extraction and preprocessing
 
 ✅ Intelligent chunking with metadata preservation
 
-✅ Semantic search using embeddings + FAISS
+✅ Dense vector embeddings for semantic search
 
-✅ Keyword retrieval using BM25
+✅ FAISS-based vector retrieval
 
-✅ Hybrid retrieval for improved accuracy
+✅ BM25 keyword retrieval
 
-✅ CrossEncoder reranking
+✅ Hybrid search for improved recall
 
-✅ LLM-generated answers
+✅ CrossEncoder reranking for better precision
+
+✅ LLM-powered answer generation
 
 ✅ Page-level citations
 
-✅ Interactive Streamlit UI
+✅ Interactive Streamlit interface
 
-✅ Display retrieved evidence chunks
+✅ Retrieved evidence visualization
 
 🏗️ System Architecture
 User Uploads PDF
@@ -53,15 +56,15 @@ Document Chunker
         ↓
 Embedding Generation
         ↓
-FAISS Index
+FAISS Vector Index
         ↓
-BM25 Index
+BM25 Keyword Index
         ↓
 User Query
         ↓
 Vector Search + BM25 Search
         ↓
-Hybrid Search
+Hybrid Retrieval
         ↓
 CrossEncoder Reranking
         ↓
@@ -69,7 +72,7 @@ Top Relevant Chunks
         ↓
 Prompt Construction
         ↓
-Groq LLM (Llama 3.3 70B)
+Groq Llama 3.3 70B
         ↓
 Answer Generation
         ↓
@@ -78,7 +81,7 @@ Source Citations + UI Display
 Frontend
 Streamlit
 
-Backend / RAG Pipeline
+Backend / Core Logic
 Python
 
 NumPy
@@ -140,9 +143,9 @@ project/
 ├── requirements.txt
 ├── .env
 └── README.md
-⚙️ RAG Pipeline
+⚙️ End-to-End RAG Pipeline
 Step 1: Document Parsing
-Extract text and page information from uploaded PDFs.
+The uploaded PDF is parsed page by page.
 
 docs = DocumentParser.parse(pdf_path)
 Output:
@@ -150,9 +153,9 @@ Output:
 {
     "source": "AI.pdf",
     "page": 1,
-    "text": "..."
+    "text": "Machine Learning is ..."
 }
-Step 2: Chunking
+Step 2: Document Chunking
 Large documents are split into smaller chunks.
 
 chunks = chunker.chunk_documents(docs)
@@ -164,8 +167,15 @@ Each chunk contains metadata:
     "page": 1,
     "chunk_id": 12
 }
+Why chunking?
+LLM context windows are limited.
+
+Smaller chunks improve retrieval accuracy.
+
+Metadata enables citations.
+
 Step 3: Embedding Generation
-Convert text into dense vector embeddings.
+Text chunks are converted into dense vector representations.
 
 embeddings = embedder.embed_documents(chunks)
 Example:
@@ -176,39 +186,74 @@ Example:
 
 [0.12, 0.54, -0.77, ...]
 Step 4: FAISS Indexing
-Store embeddings for semantic retrieval.
+Embeddings are stored in a FAISS vector database.
 
 faiss.IndexFlatIP()
+Purpose:
+
+Fast semantic similarity search
+
+Efficient nearest-neighbor retrieval
+
 Step 5: BM25 Indexing
-Enable keyword-based search.
+Keyword-based retrieval is built using BM25.
 
 BM25Okapi()
+Purpose:
+
+Exact keyword matching
+
+Better handling of IDs, codes, and technical terms
+
 Step 6: Hybrid Retrieval
 Combine semantic and keyword search.
 
 hybrid_score =
 (vector_score * 0.6) +
 (bm25_score * 0.4)
-Step 7: CrossEncoder Reranking
-Improve retrieval precision.
+Why Hybrid Search?
 
-Input:
+FAISS captures semantics
+
+BM25 captures exact keywords
+
+Together they improve retrieval quality
+
+Step 7: CrossEncoder Reranking
+Initial retrieval returns:
 
 Top 30 chunks
+The CrossEncoder reranks them based on query relevance.
+
 Output:
 
-Top 5 chunks
-Step 8: Prompt Construction
-Create structured context:
+Top 5 most relevant chunks
+This improves answer precision.
+
+Step 8: Context Construction
+Retrieved chunks are converted into structured context.
+
+Example:
 
 [Source 1]
 File: AI.pdf
 Page: 5
-...
-Step 9: LLM Generation
-Generate answers using:
 
-Llama 3.3 70B via Groq API
+Machine Learning is a subset of AI.
+Step 9: LLM Answer Generation
+The context and user question are sent to:
+
+Groq Llama 3.3 70B
+Prompt Example:
+
+Question:
+What is Machine Learning?
+
+Context:
+[Source 1]
+...
+The model generates grounded answers with citations.
+
 🎯 Example Workflow
 Upload PDF
       ↓
@@ -217,62 +262,91 @@ Ask Question:
       ↓
 Retrieve Relevant Chunks
       ↓
-Rerank Results
+Hybrid Search
       ↓
-Generate Context
+CrossEncoder Reranking
       ↓
-LLM Answer
+Build Context
+      ↓
+Generate Answer
       ↓
 Display Citations
 🚀 Installation
-Clone the repository:
-
+Clone Repository
 git clone <repository-url>
 cd project
-Install dependencies:
-
+Install Dependencies
 pip install -r requirements.txt
-Create .env file:
-
+Create Environment File
 GROQ_API_KEY=your_api_key
-Run the application:
-
+Run Application
 streamlit run app.py
+📊 Why This Architecture?
+Component	Purpose
+FAISS	Semantic Search
+BM25	Keyword Search
+Hybrid Retrieval	Better Recall
+CrossEncoder	Better Precision
+Groq LLM	Answer Generation
+Streamlit	User Interface
+🔥 Key Technical Highlights
+Retrieval-Augmented Generation (RAG)
+
+Hybrid Search Architecture
+
+Vector Databases
+
+Prompt Engineering
+
+CrossEncoder Reranking
+
+Source Attribution
+
+LLM Integration
+
+Document Intelligence Systems
+
 📈 Future Enhancements
 Multi-document support
 
-Persistent vector database
+Persistent vector databases
 
-OCR support for scanned PDFs
+OCR for scanned PDFs
 
-Authentication and user management
+Authentication & authorization
 
 Conversation memory
 
 FastAPI backend
 
-Cloud deployment on AWS/GCP/Azure
+Docker deployment
 
-Docker support
+AWS/GCP/Azure deployment
 
-💡 Key Learnings
+Real-time indexing
+
+Multi-user support
+
+🎓 Key Learnings
+This project demonstrates practical experience with:
+
+Large Language Models (LLMs)
+
 Retrieval-Augmented Generation (RAG)
-
-Vector Databases
 
 Semantic Search
 
-Hybrid Retrieval
+Vector Databases
+
+Information Retrieval
 
 Prompt Engineering
 
-LLM Integration
+End-to-End ML System Design
 
-Source Attribution
-
-Streamlit Deployment
+Production AI Applications
 
 👨‍💻 Author
 Sahith Vamsi Gandrala
 
-Built as an end-to-end Enterprise Document Intelligence Platform demonstrating modern RAG architecture, hybrid retrieval, and LLM-powered document understanding.
+Built as an end-to-end Enterprise Document Intelligence Platform showcasing modern AI system design using RAG, Hybrid Retrieval, CrossEncoder Reranking, and LLM-powered document understanding.
